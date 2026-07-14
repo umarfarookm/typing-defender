@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Defender</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Animated Background Orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <!-- p5.js Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- ===== Loading Screen ===== -->
+  <div id="loading-screen" class="screen active">
+    <div class="loading-title">TYPING DEFENDER</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loading-bar-fill"></div>
+    </div>
+    <div class="loading-text">INITIALIZING...</div>
+  </div>
+
+  <!-- ===== Home Screen ===== -->
+  <div id="home-screen" class="screen">
+    <h1 class="home-title">Typing Defender</h1>
+    <p class="home-subtitle">Type to Survive</p>
+    <div class="home-highscore">
+      High Score: <span id="home-highscore">0</span>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btn-start">Start Game</button>
+      <button class="btn btn-secondary" id="btn-instructions">Instructions</button>
+      <button class="btn btn-secondary" id="btn-statistics">Statistics</button>
+    </div>
+  </div>
+
+  <!-- ===== Instructions Screen ===== -->
+  <div id="instructions-screen" class="screen">
+    <div class="instructions-panel">
+      <h2>How to Play</h2>
+
+      <h3>Objective</h3>
+      <p>Type the falling words before they reach the bottom of the screen. Survive as long as possible and achieve the highest score!</p>
+
+      <h3>Controls</h3>
+      <ul>
+        <li>Type letters on your keyboard to match falling words</li>
+        <li>Press <strong>ESC</strong> to pause/resume</li>
+        <li>Matching characters highlight in green</li>
+      </ul>
+
+      <h3>Scoring</h3>
+      <ul>
+        <li>3-5 letter words: 5 points</li>
+        <li>6-8 letter words: 10 points</li>
+        <li>9-12 letter words: 20 points</li>
+        <li>13+ letter words: 30 points</li>
+      </ul>
+
+      <h3>Combos</h3>
+      <p>Every 5 consecutive words without a miss increases your combo multiplier (x2, x3, x4...).</p>
+
+      <h3>Power-Ups</h3>
+      <ul>
+        <li>&#x2744;&#xFE0F; Freeze Time — Stops all words for 5 seconds</li>
+        <li>&#x2B50; Double Score — Double points for 10 seconds</li>
+        <li>&#x1F4A3; Bomb — Destroys every active word</li>
+        <li>&#x1F49A; Extra Life — Adds one life</li>
+        <li>&#x1F40C; Slow Motion — Reduces falling speed</li>
+      </ul>
+
+      <h3>Difficulty</h3>
+      <p>Every 30 seconds the level increases. Words fall faster and more appear simultaneously.</p>
+
+      <button class="btn btn-secondary" id="btn-instructions-back">Back</button>
+    </div>
+  </div>
+
+  <!-- ===== Gameplay Screen (overlay for HUD/indicators) ===== -->
+  <div id="gameplay-screen" class="screen"></div>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud">
+    <div class="hud-item">
+      <span class="hud-label">Lives</span>
+      <span class="hud-value" id="hud-lives">&#x2764;&#xFE0F;&#x2764;&#xFE0F;&#x2764;&#xFE0F;</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">Score</span>
+      <span class="hud-value" id="hud-score">0</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">Level</span>
+      <span class="hud-value" id="hud-level">1</span>
+    </div>
+    <div class="hud-item" id="hud-combo"></div>
+    <div class="hud-item">
+      <span class="hud-label">Time</span>
+      <span class="hud-value" id="hud-time">0m 00s</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">Best</span>
+      <span class="hud-value" id="hud-highscore">0</span>
+    </div>
+  </div>
+
+  <!-- ===== Pause Screen ===== -->
+  <div id="pause-screen" class="screen">
+    <div class="pause-title">PAUSED</div>
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btn-resume">Resume</button>
+      <button class="btn btn-secondary" id="btn-pause-home">Home</button>
+    </div>
+  </div>
+
+  <!-- ===== Game Over Screen ===== -->
+  <div id="gameover-screen" class="screen">
+    <div class="gameover-title">GAME OVER</div>
+    <div id="go-new-highscore">&#x1F3C6; NEW HIGH SCORE! &#x1F3C6;</div>
+    <div class="gameover-stats">
+      <div class="go-stat">
+        <div class="go-stat-label">Final Score</div>
+        <div class="go-stat-value" id="go-score">0</div>
+      </div>
+      <div class="go-stat">
+        <div class="go-stat-label">Best Combo</div>
+        <div class="go-stat-value" id="go-combo">0</div>
+      </div>
+      <div class="go-stat">
+        <div class="go-stat-label">Level Reached</div>
+        <div class="go-stat-value" id="go-level">1</div>
+      </div>
+      <div class="go-stat">
+        <div class="go-stat-label">Time Survived</div>
+        <div class="go-stat-value" id="go-time">0m 00s</div>
+      </div>
+      <div class="go-stat" style="grid-column: 1 / -1;">
+        <div class="go-stat-label">Accuracy</div>
+        <div class="go-stat-value" id="go-accuracy">0%</div>
+      </div>
+    </div>
+    <div class="gameover-buttons">
+      <button class="btn btn-primary" id="btn-restart">Play Again</button>
+      <button class="btn btn-secondary" id="btn-gameover-home">Home</button>
+    </div>
+  </div>
+
+  <!-- ===== Statistics Screen ===== -->
+  <div id="statistics-screen" class="screen">
+    <div class="stats-panel">
+      <h2>Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">High Score</div>
+          <div class="stat-value" id="stat-highscore">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Games Played</div>
+          <div class="stat-value" id="stat-games">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Best Combo</div>
+          <div class="stat-value" id="stat-combo">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Highest Level</div>
+          <div class="stat-value" id="stat-level">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Longest Survival</div>
+          <div class="stat-value" id="stat-survival">0m 00s</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Accuracy</div>
+          <div class="stat-value" id="stat-accuracy">0%</div>
+        </div>
+        <div class="stat-card" style="grid-column: 1 / -1;">
+          <div class="stat-label">Words Typed</div>
+          <div class="stat-value" id="stat-words">0</div>
+        </div>
+      </div>
+      <div class="stats-buttons">
+        <button class="btn btn-secondary" id="btn-stats-back">Back</button>
+        <button class="btn btn-danger" id="btn-stats-reset">Reset Stats</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mute Button (global) -->
+  <button id="btn-mute">&#x1F50A;</button>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="js/words.js"></script>
+  <script src="js/particle.js"></script>
+  <script src="js/word.js"></script>
+  <script src="js/powerup.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/sketch.js"></script>
+</body>
+</html>
