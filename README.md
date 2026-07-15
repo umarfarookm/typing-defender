@@ -2,6 +2,8 @@
 
 A fast-paced browser-based typing game built with HTML5, CSS3, vanilla JavaScript, and p5.js. Type falling developer-themed words before they reach the bottom of the screen to survive and achieve the highest score.
 
+**Demo:** https://typing-defender-swart.vercel.app/
+
 ## Features
 
 - **7 Game Screens** — Loading, Home, Instructions, Gameplay, Pause, Game Over, Statistics
